@@ -8,4 +8,7 @@ class Comments(BaseModel):
     creator: User = Field(default=None)
     initial_comment: str = Field(default=None)
     content: str = Field(default=None)
-    reply_comments: list[User, str] = Field(default=None)
+    reply_comments: dict[User, str] = Field(default=None)
+
+    class Config:
+        orm_mode = True

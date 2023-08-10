@@ -1,19 +1,18 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, EmailStr
 
 
-class User(BaseModel):
-    id: int
+class UserBase(BaseModel):
     username: str
-    email_address: EmailStr = Field(default=None)
+    email_address: EmailStr
+
+
+class User(UserBase):
+    id: int
+    posts: list
 
     class Config:
-        schema_extra = {
-            "user_demo": {
-                "username": "@example",
-                "email_address": "user@example.com"
-            }
-        }
+        orm_mode = True
 
 
-class UserIn(User):
-    password: EmailStr = Field(default=None)
+class UserCreate(UserBase):
+    password: str

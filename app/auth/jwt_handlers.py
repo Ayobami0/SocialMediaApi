@@ -4,11 +4,13 @@ from typing import Annotated
 from jose import jwt, JWTError
 from decouple import config
 
+from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 
-from models.user_model import UserIn
+from database.db import get_db
+from database.crud.read import ReadRepository
 from .models.token import TokenData
 
 
@@ -16,16 +18,6 @@ JWT_SECRET = config("SECRET")
 JWT_ALGORITHM = config("ALGORITHM")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
-    }
-}
 
 
 def verify_password(plain_password, hashed_password):
@@ -36,17 +28,11 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
-        return UserIn(**user_dict)
-
-
-def authenticate_user(fake_db, username: str, password: str):
-    user = get_user(fake_db, username)
+def authenticate_user(db: Session, email_address: str, password: str):
+    user = ReadRepository.get_users_by_email(db, email_address)
     if not user:
         return False
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(password, user.password):
         return False
     return user
 
@@ -62,7 +48,10 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_JWT
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(
+        token: Annotated[str, Depends(oauth2_scheme)],
+        db: Session = Depends(get_db)
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -70,13 +59,15 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     )
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        email_address: str = payload.get("sub")
+        if email_address is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenData(email_address=email_address)
     except JWTError:
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
+    user = ReadRepository.get_users_by_email(
+        db=db,
+        email_address=token_data.email_address)
     if user is None:
         raise credentials_exception
     return user

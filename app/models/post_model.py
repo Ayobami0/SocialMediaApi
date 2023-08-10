@@ -1,18 +1,31 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from .comments_model import Comments
+from .user_model import User
 
 
-class Post(BaseModel):
-    id: int = Field(default=None)
-    title: str = Field(default=None)
-    content: str = Field(default=None)
-    comments: Comments = Field(default=None)
+class PostBase(BaseModel):
+    pass
+
+
+class Post(PostBase):
+    owner_id: int
+    id: int
+    comments: Comments | None = None
+    likes: int = 0
+    owner: User
 
     class Config:
-        schema_extra = {
-            "post_demo": {
-                "title": "Some title on a topic",
-                "content": "Some content to expand the title"
-            }
-        }
+        orm_mode = True
+
+
+class PostUpdate(PostBase):
+    content: str | None = None
+
+
+class PostUpdateLikes(PostBase):
+    likes: int
+
+
+class PostCreate(PostBase):
+    content: str | None = None
