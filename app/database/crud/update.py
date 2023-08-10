@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 
 from ..db_models import user_db, post_db
@@ -26,9 +28,9 @@ class UpdateRepository:
             post_db.PostDB
         ).filter(
             post_db.PostDB.owner_id == user_id,
-            post_db.PostDB.id == post_db
+            post_db.PostDB.id == post_id
         ).update(
-            {'content': content}
+            {'content': content, 'date_modified': datetime.utcnow()}
         )
         db.commit()
         post = db.query(post_db.PostDB).filter(

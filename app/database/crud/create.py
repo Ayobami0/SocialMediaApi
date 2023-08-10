@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 
 from ..db_models import user_db, post_db, comment_db
@@ -18,7 +20,11 @@ class CreateRepository:
         return db_user
 
     def create_post(db: Session, post: post_model.PostCreate, user_id: int):
-        db_post = post_db.PostDB(**post.dict(), owner_id=user_id)
+        db_post = post_db.PostDB(
+            **post.dict(),
+            owner_id=user_id,
+            date_posted=datetime.utcnow()
+        )
         db.add(db_post)
         db.commit()
         db.refresh(db_post)
@@ -30,7 +36,7 @@ class CreateRepository:
             post_id: int
             ):
         db_comments = comment_db.CommentDB(
-            **comment.dict(), from_post_id=post_id)
+            **comment.dict(), from_post_id=post_id, date_created=datetime.utcnow())
         db.add(db_comments)
         db.commit()
         db.refresh(db_comments)

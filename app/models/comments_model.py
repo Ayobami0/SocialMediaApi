@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -15,6 +17,7 @@ class Comment(CommentBase):
     author: str
     content: str
     from_post_id: int
+    date_created: datetime
 
     class Config:
         orm_mode = True

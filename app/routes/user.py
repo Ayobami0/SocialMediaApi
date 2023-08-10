@@ -57,11 +57,12 @@ async def edit_post(
     current_user: Annotated[User, Depends(get_current_user),],
     db: Session = Depends(get_db),
 ):
+    print(post.content)
     post_db = UpdateRepository.update_post(
         db,
-        post.id,
-        current_user.id,
-        post.content
+        post_id=post.id,
+        user_id=current_user.id,
+        content=post.content
     )
     if not post_db:
         raise HTTPException(
@@ -82,6 +83,23 @@ async def like_post(
         db,
         post_id,
         like=True)
+
+    return post_db
+
+
+@user_route.patch("/post/unlike", response_model=Post)
+async def unlike_post(
+    post_id: int,
+    current_user: Annotated[User, Depends(get_current_user),],
+    db: Session = Depends(get_db)
+):
+    post_db = ReadRepository.get_post(db, post_id).likes
+    if post_db == 0:
+        return post_db
+    post_db = UpdateRepository.change_post_like(
+        db,
+        post_id,
+        like=False)
 
     return post_db
 

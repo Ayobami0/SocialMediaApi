@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 from .user_model import User
@@ -12,6 +14,8 @@ class PostComment(PostBase):
     id: int
     likes: int = 0
     owner: User
+    date_posted: datetime
+    date_modified: datetime | None = None
 
 
 from .comments_model import Comment
