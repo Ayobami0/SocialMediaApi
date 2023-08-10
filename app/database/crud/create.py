@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from ..db_models import user_db, post_db
-from models import user_model, post_model
+from ..db_models import user_db, post_db, comment_db
+from models import user_model, post_model, comments_model
 from auth.jwt_handlers import get_password_hash
 
 
@@ -23,3 +23,15 @@ class CreateRepository:
         db.commit()
         db.refresh(db_post)
         return db_post
+
+    def create_comment(
+            db: Session,
+            comment: comments_model.CommentCreate,
+            post_id: int
+            ):
+        db_comments = comment_db.CommentDB(
+            **comment.dict(), from_post_id=post_id)
+        db.add(db_comments)
+        db.commit()
+        db.refresh(db_comments)
+        return db_comments

@@ -1,14 +1,25 @@
-from pydantic import BaseModel, Field
-
-from .user_model import User
+from pydantic import BaseModel
 
 
-class Comments(BaseModel):
-    id: int = Field(default=None)
-    creator: User = Field(default=None)
-    initial_comment: str = Field(default=None)
-    content: str = Field(default=None)
-    reply_comments: dict[User, str] = Field(default=None)
+class CommentBase(BaseModel):
+    author: str
+    content: str
+
+
+class CommentCreate(CommentBase):
+    pass
+
+
+class Comment(CommentBase):
+    id: int
+    author: str
+    content: str
+    from_post_id: int
 
     class Config:
         orm_mode = True
+
+
+from .post_model import PostComment
+class CommentSourcePost(Comment):
+    post: PostComment

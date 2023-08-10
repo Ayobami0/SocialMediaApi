@@ -8,6 +8,10 @@ class UserBase(BaseModel):
 
 class User(UserBase):
     id: int
+
+
+class UserPost(User):
+    id: int
     posts: list
 
     class Config:

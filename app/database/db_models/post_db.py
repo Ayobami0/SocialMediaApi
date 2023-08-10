@@ -13,3 +13,5 @@ class PostDB(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("UserDB", back_populates="posts")
+
+    comments = relationship("CommentDB", back_populates="post")
