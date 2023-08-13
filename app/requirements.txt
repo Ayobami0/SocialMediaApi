@@ -1,0 +1,11 @@
+colorama==0.4.6
+decorator==5.1.1
+markdown-it-py==3.0.0
+mdurl==0.1.2
+psutil==5.9.5
+Pygments==2.15.1
+pyte==0.8.1
+rich==13.5.2
+six==1.16.0
+thefuck==3.32
+wcwidth==0.2.6
