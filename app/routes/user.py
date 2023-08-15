@@ -1,3 +1,5 @@
+from typing import List
+
 from typing_extensions import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -22,7 +24,7 @@ async def me(
     return current_user
 
 
-@user_route.get("/posts", response_model=list[Post])
+@user_route.get("/posts", response_model=List[Post])
 async def get_posts_by_user(
     current_user: Annotated[User, Depends(get_current_user),],
     db: Session = Depends(get_db),

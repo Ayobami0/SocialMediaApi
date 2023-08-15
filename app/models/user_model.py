@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-
+from typing import List
 
 class UserBase(BaseModel):
     username: str
@@ -12,7 +12,7 @@ class User(UserBase):
 
 class UserPost(User):
     id: int
-    posts: list
+    posts: List
 
     class Config:
         orm_mode = True

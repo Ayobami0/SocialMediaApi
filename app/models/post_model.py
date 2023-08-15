@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Union, List
 
 from pydantic import BaseModel
 
@@ -6,7 +7,7 @@ from .user_model import User
 
 
 class PostBase(BaseModel):
-    content: str | None = None
+    content: Union[str, None] = None
 
 
 class PostComment(PostBase):
@@ -15,12 +16,12 @@ class PostComment(PostBase):
     likes: int = 0
     owner: User
     date_posted: datetime
-    date_modified: datetime | None = None
+    date_modified: Union[datetime, None] = None
 
 
 from .comments_model import Comment
 class Post(PostComment):
-    comments: list[Comment] | None = None
+    comments: Union[List[Comment], None] = None
 
     class Config:
         orm_mode = True

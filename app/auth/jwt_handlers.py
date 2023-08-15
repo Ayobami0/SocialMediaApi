@@ -1,3 +1,5 @@
+from typing import Union, Dict
+
 from datetime import datetime, timedelta
 from typing_extensions import Annotated
 
@@ -37,7 +39,7 @@ def authenticate_user(db: Session, email_address: str, password: str):
     return user
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(data: Dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta:
         expires = datetime.utcnow() + expires_delta

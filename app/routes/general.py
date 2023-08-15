@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -10,7 +12,7 @@ from database.db import get_db
 general_route = APIRouter(prefix='/all', tags=['general'])
 
 
-@general_route.get("/posts", response_model=list[Post])
+@general_route.get("/posts", response_model=List[Post])
 async def get_all_posts(
     skip: int = 0, limit: int = 10,
     db: Session = Depends(get_db)
@@ -19,7 +21,7 @@ async def get_all_posts(
     return post_db
 
 
-@general_route.get("/user", response_model=list[User])
+@general_route.get("/user", response_model=List[User])
 async def get_all_users(
     skip: int = 0, limit: int = 10,
     db: Session = Depends(get_db)
