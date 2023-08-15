@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Annotated
+from typing_extensions import Annotated
 
 from fastapi import (
     APIRouter, status,

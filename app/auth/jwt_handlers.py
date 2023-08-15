@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Annotated
+from typing_extensions import Annotated
 
 from jose import jwt, JWTError
 from decouple import config
